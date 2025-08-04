@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 /*Sad to say I needed AI for this, didn't realize until I got this far in 
 that I needed to know react.
 I've only learned to code in *pure* JavaScript.
@@ -68,93 +69,95 @@ export default function Home() {
     });
     if (res.ok) fetchTasks();
   };
-
+  /* Had AI help with Tailwind styling. Got to a point where marking tasks as completed
+  would make the bg color disappear, the bg color of list items was wrong,
+  and the bg of the page didnt go all the way down.
+  I now am diagnosed with clinical depression.
+  I am now also diagnosed with a severe case of "I hate this code" */
   return (
-    <div>
-      <h1>Task Manager</h1>
-      <div style={{ marginBottom: '16px' }}>
+    <div className='bg-gray-600 min-h-screen'>
+      <h1 className='text-2xl font-bold mb-4 text-center text-gray-400'>Task Manager</h1>
+      <div className="flex justify-center items-center mb-4 font-bold">
         <input
           value={newTask}
           onChange={e => setNewTask(e.target.value)}
           placeholder="New task"
-          style={{ marginRight: '8px' }}
+          className="border border-gray-300 rounded-md p-2 mr-2"
         />
         <input
           value={newDescription}
           onChange={e => setNewDescription(e.target.value)}
           placeholder="Description (optional)"
-          style={{ marginRight: '8px' }}
+          className="border border-gray-300 rounded-md p-2 mr-2"
         />
         <select
           value={newPriority}
           onChange={e => setNewPriority(e.target.value)}
-          style={{ marginRight: '8px' }}
+          className="border border-gray-300 rounded-md p-2 mr-2 colors-grey700"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="critical">Critical</option>
+          <option value="low" className='text-green-900 font-bold'>Low</option>
+          <option value="medium" className='text-orange-600 font-bold'>Medium</option>
+          <option value="critical" className='text-red-600 font-bold'>Critical</option>
         </select>
-        <button onClick={addTask}>Add Task</button>
+        <button onClick={addTask} className='bg-gray-500 hover:bg-gray-600 text-white rounded-md p-2'>Add Task</button>
       </div>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="list-none p-0">
         {tasks.map(task => (
-          <li
-            key={task.id}
-            style={{
-              marginBottom: '24px',
-              padding: '12px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              background: task.completed ? '#f2f2f2' : '#fff',
-            }}
+      <li
+  key={task.id}
+  className={`mb-6 p-3 border border-gray-300 rounded-lg ${
+    task.completed ? 'bg-gray-700' : 'bg-gray-900'
+  }`}
+>
+  <span
+    className={`font-bold text-[1.1em] ${task.completed ? 'line-through text-gray-400' : 'text-white'}`}
+  >
+    {task.title}
+  </span>
+      {task.description && (
+        <div className="italic text-gray-500 mt-1">
+          {task.description}
+        </div>
+      )}
+      <div>
+        <span
+          className={`font-bold ml-2 ${
+            task.priority === 'critical'
+              ? 'text-red-600'
+              : task.priority === 'medium'
+              ? 'text-orange-500'
+              : 'text-green-600'
+          }`}
+        >
+          {task.priority.toUpperCase()}
+        </span>
+      </div>
+      <div className="text-xs text-gray-400 mt-1">
+        <span>Created: {new Date(task.createdAt).toLocaleString()}</span>
+        <span className="ml-2">
+          Updated: {new Date(task.updatedAt).toLocaleString()}
+        </span>
+      </div>
+      <div className="mt-2">
+        {!task.completed ? (
+          <button
+            onClick={() => markComplete(task.id)}
+            className="bg-grey-500 hover:bg-grey-600 text-white rounded px-3"
           >
-            <span
-              style={{
-                textDecoration: task.completed ? 'line-through' : 'none',
-                color: task.completed ? '#888' : '#000',
-                fontWeight: 'bold',
-                fontSize: '1.1em',
-              }}
-            >
-              {task.title}
-            </span>
-            {task.description && (
-              <div style={{ fontStyle: 'italic', color: '#666', marginTop: '4px' }}>
-                {task.description}
-              </div>
-            )}
-            <div>
-              <span
-                style={{
-                  color:
-                    task.priority === 'critical'
-                      ? 'red'
-                      : task.priority === 'medium'
-                      ? 'orange'
-                      : 'green',
-                  fontWeight: 'bold',
-                  marginLeft: '8px',
-                }}
-              >
-                {task.priority.toUpperCase()}
-              </span>
-            </div>
-            <div style={{ fontSize: '0.8em', color: '#999', marginTop: '4px' }}>
-              <span>Created: {new Date(task.createdAt).toLocaleString()}</span>
-              <span style={{ marginLeft: '8px' }}>
-                Updated: {new Date(task.updatedAt).toLocaleString()}
-              </span>
-            </div>
-            <div style={{ marginTop: '8px' }}>
-              {!task.completed ? (
-                <button onClick={() => markComplete(task.id)}>Mark Completed</button>
-              ) : (
-                <button onClick={() => deleteTask(task.id)}>Delete</button>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
+            Mark Completed
+          </button>
+        ) : (
+          <button
+            onClick={() => deleteTask(task.id)}
+            className="bg-red-500 hover:bg-red-600 text-white rounded px-3"
+          >
+            Delete
+          </button>
+        )}
+      </div>
+    </li>
+  ))}
+</ul>
     </div>
   );
 }
